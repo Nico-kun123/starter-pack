@@ -1,0 +1,27 @@
+{
+  "name": "my-portfolio",
+  "version": "0.0.0",
+  "description": "Мой гайд по более быстрому старту и ускорению разработки проектов 😎",
+  "private": true,
+  "homepage": "https://nico-kun123.github.io/",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "npm run build && vite preview",
+    "test:unit": "vitest",
+    "test": "jest --config=jest.config.js --watchAll --cache",
+    "coverage": "jest --config=jest.config.js --coverage --watchAll --cache",
+    "clearCache": "jest --clearCache",
+    "type-check": "vue-tsc --build --force",
+    "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
+    "format": "prettier --write src/",
+    "deploy": "npm run build && gh-pages -d dist"
+  },
+  "keywords": [],
+  "author": {
+    "name": "Nicolay Kudryavtsev"
+  },
+  "dependencies": {},
+  "devDependencies": {}
+}
