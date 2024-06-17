@@ -1,4 +1,5 @@
 # ВАЖНО
+
 > 👀 **Изображение**: [Здесь](https://www.plantuml.com/plantuml/png/jLLTJjj047xVKup22uWc1uXGeQYYJrH8v0ABFOvNsBkMTmn2fHAaug5IVzIg3tth5MX5fAejS8Nr5Ng27g5ZEq6ROb3JAegITRxlcvbl9l5umvBCgKWJ8UIUfLm6144YhONE8wrIcNJWcG1O1IrJx0Chb1xMG9GejEjzs3CcGQdX60eTOgGqXZLl3rLw7p-8SIStPEWemssqLWvntIlGxTQg6rCeoIwlU0AF6o8zPNjCtugt94a5asCRAJPXcumpWDAHyRZdjoUogV9mEezUh_V_BdtQClBlrhQKZHTdBUCYyLtiOInfmEzjbDh-VGTJuubC6J5jvbiyjrkzStYPiJYtfHtKmqBfnJYIMYP7LjdvNQaXcWMPih7CgOqm1vWdHePRXGv86RsiT5RGOqco3uNUr-PGhxGAdw36N0LsRV3GZndCs_KkEzl_esd8SdKW2NSno96yX4lC6CA0CFGuhzZCr6ogaja1BLLUTcPJp4wb5lZLv_uPD-NU4Ioig-PoTSvbqcnwM3lkTg7QSJD0jLc4gE39zyaDwq6J6yP7wZ-h45LmZJGjY_gp0Vn92A4D8IGO4PW8clBzVkU-PqH70BG9El3pv0EKhykHks99UUgk-FMvVEd6xj9zTUC7uBwvguekJvWP0vClt8KRbwDAVyReUQKiH-MhyhHy2-uBk6j6cvWHvxXsOm5Lck_kd2MdxlpcSTaJ5VCUt6NvpltWWnLdNEQYJiZfMXprcrQKXL2I13ujcHn3K1eeHiYcBRBEH3NKL9ji_r-VFhxf2DGXL6CKOeClYpJv3G00)
 
 > **Веб-сервисервис для построения UML-диаграмм онлайн**: [Здесь](https://plantuml.com/ru/sitemap)

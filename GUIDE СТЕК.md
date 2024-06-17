@@ -1,7 +1,8 @@
 # Упрощение разработки проектов для тех, кому лень 😴
 
-> **Статус руководства:**
-> 🟩 Актуален
+> [!NOTE]
+>
+> **Статус руководства:** 🟩 Актуален.
 
 ## 📑Содержание
 
@@ -24,7 +25,7 @@
 
    - [Советы для разработке на Vue](#советы-для-разработке-на-vue)
    - [Vuelidate](#vuelidate)
-   - [Pinia]
+   - [Pinia](#pinia)
 
    f) [Nuxt.js](#nuxtjs)
 
@@ -90,6 +91,8 @@
 
 ### HTML
 
+> [!NOTE]
+>
 > 👀 Методология БЭМ (<https://ru.bem.info/methodology/quick-start/>)
 
 **БЭМ (Блок, Элемент, Модификатор)** — компонентный подход к веб-разработке. В его основе лежит принцип разделения интерфейса на независимые блоки. Он позволяет легко и быстро разрабатывать интерфейсы любой сложности и повторно использовать существующий код, избегая «Copy-Paste».
@@ -247,9 +250,7 @@
   <input class="search-form__input" />
 
   <!-- Элемент `button` имеет булевый модификатор `disabled` -->
-  <button class="search-form__button search-form__button_disabled">
-    Найти
-  </button>
+  <button class="search-form__button search-form__button_disabled">Найти</button>
 </form>
 ```
 
@@ -293,6 +294,8 @@
 
 ### CSS
 
+> [!NOTE]
+>
 > 👀 Методология БЭМ (<https://ru.bem.info/methodology/css/>)
 
 В БЭМ не используют селекторы тегов и идентификаторов. Стили блоков и элементов описываются через селекторы классов.
@@ -386,6 +389,8 @@
 
 Про БЭМ всё.
 
+> [!TIP]
+>
 > Дальше идут советы всякие 👀
 
 1. Отступы margin и padding отсчитываются по часовой стрелке:
@@ -572,6 +577,114 @@ h1 {
 
 👀 Если используется Vue, то не нужно делать компиляцию из Sass в CSS. Достаточно просто в теге <code>style</code> у компонента указать атрибут <code>lang="scss"</code>.
 
+Если нужно использовать SCSS-переменные в отдельном файле, то для этого нужно сделать несколько шагов:
+
+- Создать отдельный файл <code>\_variables.scss</code>:
+
+```scss
+$background-body: #ffe5e5;
+$background: #efefef;
+
+// PADDING & MARGIN
+$padding-main: 15px;
+$margin-main: 30px;
+
+// NAVBAR
+$navbar-color: #756ab6;
+
+// TEXT
+$selection: #ffffff;
+$text-main: #ffffff;
+$text-bright: #ffffff;
+$text-muted: #70777f;
+$font-family: 'Open Sans', sans-serif;
+$line-height: 1.5;
+
+// FONT SIZE
+$font-size-b: 14pt;
+$font-size-m: 12pt;
+$font-size-s: 10pt;
+
+// LINKS
+$links: #13a0ff;
+$focus: #3738ca;
+
+// BORDER
+$border: #cf8c8c;
+$border-radius: 15px;
+$box-shadow: 0 5px 5px rgba(0, 0, 0, 0.5);
+
+// ANIMATION
+$animation-duration: 0.1s;
+
+$button-base: #c9dbf1;
+$button-hover: #7fbde5;
+
+$scrollbar-thumb: #a9e4f5;
+$scrollbar-thumb-hover: $button-hover;
+
+$form-placeholder: #949494;
+$form-text: #180202;
+```
+
+- Импортировать это в файл <code>base.scss</code>, а его потом в файл <code>main.scss</code>:
+
+```scss
+// base.scss
+@use 'variables' as vars;
+
+*,
+*::before,
+*::after {
+  font-family: vars.$font-family;
+  line-height: vars.$line-height;
+  transition: vars.$animation-duration;
+  // ...
+}
+
+// main.scss
+@import './base.scss';
+```
+
+- Импортировать <code>main.scss</code> в <code>main.ts</code>:
+
+```ts
+// main.ts
+import './assets/main.scss'
+// ...
+```
+
+- Добавить конфигурацию для CSS и SCSS в файл <code>vite.config.js</code>:
+
+```js
+import { fileURLToPath, URL } from 'node:url'
+
+import { defineConfig } from 'vite'
+import vue from '@vitejs/plugin-vue'
+
+// https://vitejs.dev/config/
+export default defineConfig({
+  plugins: [vue()],
+  optimizeDeps: {
+    include: ['vue']
+  },
+  base: './',
+  resolve: {
+    alias: {
+      '@': fileURLToPath(new URL('./src', import.meta.url))
+    }
+  },
+  css: {
+    preprocessorOptions: {
+      scss: {
+        // ПЕРЕМЕННЫЕ SCSS 👀
+        additionalData: '@import "@/assets/_variables.scss";'
+      }
+    }
+  }
+})
+```
+
 ### Javascript
 
 Я не знаю, о чём здесь можно особо сказать. Так что поговорю о:
@@ -587,30 +700,30 @@ h1 {
 
 ```js
 function getCounter() {
-  let counter = 0;
+  let counter = 0
   return function () {
-    return counter++;
-  };
+    return counter++
+  }
 }
-let count = getCounter();
-console.log(count()); // 0
-console.log(count()); // 1
-console.log(count()); // 2
+let count = getCounter()
+console.log(count()) // 0
+console.log(count()) // 1
+console.log(count()) // 2
 ```
 
 Пример генератора:
 
 ```js
 function* idMaker() {
-  let index = 0;
-  while (true) yield index++;
+  let index = 0
+  while (true) yield index++
 }
 
-let gen = idMaker(); // "Generator { }"
+let gen = idMaker() // "Generator { }"
 
-console.log(gen.next().value); // 0
-console.log(gen.next().value); // 1
-console.log(gen.next().value); // 2
+console.log(gen.next().value) // 0
+console.log(gen.next().value) // 1
+console.log(gen.next().value) // 2
 // ...
 ```
 
@@ -621,8 +734,8 @@ let promise = new Promise((resolve, reject) => {
   // эта функция выполнится автоматически, при вызове new Promise
 
   // через 1 секунду сигнализировать, что задача выполнена с результатом "done"
-  setTimeout(() => resolve("done"), 1000);
-});
+  setTimeout(() => resolve('done'), 1000)
+})
 
 // resolve запустит первую функцию, переданную в .then
 promise
@@ -631,11 +744,11 @@ promise
     (error) => alert(error) // не будет запущена
   )
   .catch(alert)
-  .finally(() => alert("Promise завершён")) // срабатывает первым;
+  .finally(() => alert('Promise завершён')) // срабатывает первым;
   .then(function (result) {
     // (**)
-    alert("Not done 🤪");
-  });
+    alert('Not done 🤪')
+  })
 ```
 
 Promise.all, Promise.allSettled, Promise.race, Promise.any:
@@ -645,50 +758,44 @@ Promise.all, Promise.allSettled, Promise.race, Promise.any:
 //  возвращённый Promise.all, немедленно завершается с этой ошибкой.
 Promise.all([
   new Promise((resolve, reject) => setTimeout(() => resolve(1), 1000)),
-  new Promise((resolve, reject) =>
-    setTimeout(() => reject(new Error("Ошибка!")), 2000)
-  ),
-  new Promise((resolve, reject) => setTimeout(() => resolve(3), 3000)),
-]).catch(alert); // Error: Ошибка!
+  new Promise((resolve, reject) => setTimeout(() => reject(new Error('Ошибка!')), 2000)),
+  new Promise((resolve, reject) => setTimeout(() => resolve(3), 3000))
+]).catch(alert) // Error: Ошибка!
 
 // Метод Promise.allSettled всегда ждёт завершения всех промисов
 // Эта возможность была добавлена в язык недавно
 let urls = [
-  "https://api.github.com/users/iliakan",
-  "https://api.github.com/users/remy",
-  "https://no-such-url",
-];
+  'https://api.github.com/users/iliakan',
+  'https://api.github.com/users/remy',
+  'https://no-such-url'
+]
 Promise.allSettled(urls.map((url) => fetch(url))).then((results) => {
   // (*)
   results.forEach((result, num) => {
-    if (result.status == "fulfilled") {
-      alert(`${urls[num]}: ${result.value.status}`);
+    if (result.status == 'fulfilled') {
+      alert(`${urls[num]}: ${result.value.status}`)
     }
-    if (result.status == "rejected") {
-      alert(`${urls[num]}: ${result.reason}`);
+    if (result.status == 'rejected') {
+      alert(`${urls[num]}: ${result.reason}`)
     }
-  });
-});
+  })
+})
 
 // Ждёт только первый выполненный промис, из которого
 //  берёт результат (или ошибку).
 Promise.race([
   new Promise((resolve, reject) => setTimeout(() => resolve(1), 1000)),
-  new Promise((resolve, reject) =>
-    setTimeout(() => reject(new Error("Ошибка!")), 2000)
-  ),
-  new Promise((resolve, reject) => setTimeout(() => resolve(3), 3000)),
-]).then(alert); // 1
+  new Promise((resolve, reject) => setTimeout(() => reject(new Error('Ошибка!')), 2000)),
+  new Promise((resolve, reject) => setTimeout(() => resolve(3), 3000))
+]).then(alert) // 1
 
 // Ждёт только первый успешно выполненный промис, из
 //  которого берёт результат
 Promise.any([
-  new Promise((resolve, reject) =>
-    setTimeout(() => reject(new Error("Ошибка!")), 1000)
-  ),
+  new Promise((resolve, reject) => setTimeout(() => reject(new Error('Ошибка!')), 1000)),
   new Promise((resolve, reject) => setTimeout(() => resolve(1), 2000)),
-  new Promise((resolve, reject) => setTimeout(() => resolve(3), 3000)),
-]).then(alert); // 1
+  new Promise((resolve, reject) => setTimeout(() => resolve(3), 3000))
+]).then(alert) // 1
 ```
 
 У объекта promise, возвращаемого конструктором new Promise, есть внутренние свойства (но мы не имеем к ним прямого доступа):
@@ -699,7 +806,7 @@ Promise.any([
 Сортировка числовых массивов:
 
 ```js
-[0, 10, 4, 9, 123, 54, 1].sort((a, b) => a - b); // [0, 1, 4, 9, 10, 54, 123]
+;[0, 10, 4, 9, 123, 54, 1].sort((a, b) => a - b) // [0, 1, 4, 9, 10, 54, 123]
 ```
 
 ### Typescript
@@ -748,6 +855,8 @@ Vue уже написан на TypeScript.
 
 #### React + Typescript
 
+> [!IMPORTANT]
+>
 > Не закончено!
 
 При установке проекта, используя команду <code>npm create vite@latest</code>, будет показаны шаги по первоначальной настройке. Также в проект будут добавлены все необходимые файлы.
@@ -770,26 +879,26 @@ npm init @eslint/config
 module.exports = {
   env: {
     browser: true,
-    es2021: true,
+    es2021: true
   },
-  extends: "eslint:recommended",
+  extends: 'eslint:recommended',
   overrides: [
     {
       env: {
-        node: true,
+        node: true
       },
-      files: [".eslintrc.{js,cjs}"],
+      files: ['.eslintrc.{js,cjs}'],
       parserOptions: {
-        sourceType: "script",
-      },
-    },
+        sourceType: 'script'
+      }
+    }
   ],
   parserOptions: {
-    ecmaVersion: "latest",
-    sourceType: "module",
+    ecmaVersion: 'latest',
+    sourceType: 'module'
   },
-  rules: {},
-};
+  rules: {}
+}
 ```
 
 Теперь можно запустить ESLint для любого файла в проекте:
@@ -818,6 +927,8 @@ npx eslint yourfile.js
 
 ### dotenv
 
+> [!NOTE]
+>
 > ❗ Лучше всего подходит для development, а не production.
 
 Хранит переменные среды в файле <code>.env</code>.
@@ -837,9 +948,9 @@ SECRET_KEY="YOURSECRETKEYGOESHERE"
 В основном файле проекта в самом начале импортируем его:
 
 ```js
-require("dotenv").config();
+require('dotenv').config()
 // или
-import "dotenv/config";
+import 'dotenv/config'
 ```
 
 Всё! 👍
@@ -847,30 +958,32 @@ import "dotenv/config";
 Доступ к переменной можно получить через <code>process.env</code>:
 
 ```js
-const PORT = process.env.PORT || 3000;
-const express = require("express");
-const app = express();
+const PORT = process.env.PORT || 3000
+const express = require('express')
+const app = express()
 
 app.listen(PORT, () => {
-  console.log(`Running on port ${PORT}.`);
-});
+  console.log(`Running on port ${PORT}.`)
+})
 
-app.get("/", function (req, res) {
-  res.send(`Hello ${process.env.HELLO}`);
-});
+app.get('/', function (req, res) {
+  res.send(`Hello ${process.env.HELLO}`)
+})
 ```
 
 Если нужно опубликовать такой файл в production, то лучше публиковать не <code>.env</code>, а <code>.env.vault</code> (подробнее про это написано в [официальной документации](https://www.dotenv.org/docs/security/env-vault)).
 
 ❗**dotenv + Vite**❗
 
+> [!NOTE]
+>
 > 👀 Про это написано в оф. документации:
 > <https://vitejs.dev/guide/env-and-mode>
 
 Здесь доступ к переменным можно получить другим способом:
 
 ```js
-console.log(import.meta.env.VITE_HELLO);
+console.log(import.meta.env.VITE_HELLO)
 ```
 
 У Vite уже есть свои встроенные переменные:
@@ -899,12 +1012,12 @@ console.log(import.meta.env.VITE_HELLO);
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
-  readonly VITE_APP_TITLE: string;
+  readonly VITE_APP_TITLE: string
   // more env variables...
 }
 
 interface ImportMeta {
-  readonly env: ImportMetaEnv;
+  readonly env: ImportMetaEnv
 }
 ```
 
@@ -914,6 +1027,8 @@ interface ImportMeta {
 <h1>Vite is running in %MODE%</h1>
 <p>Using data from %VITE_API_URL%</p>
 ```
+
+❗ **Лучше создавать repository secrets в репозитории, если на то пошло**. 🤓
 
 ### Vue.js
 
@@ -942,9 +1057,10 @@ npm create vue@latest
 
 #### Советы для разработке на Vue
 
+> [!NOTE]
 > ❗ _Полный список рекомендаций написан здесь_:
-> https://ru.vuejs.org/v2/style-guide/index.html (**Vue2**)
-> https://v3.ru.vuejs.org/ru/style-guide/ (**Vue3**)
+> <https://ru.vuejs.org/v2/style-guide/index.html> (**Vue2**)
+> <https://v3.ru.vuejs.org/ru/style-guide/> (**Vue3**)
 
 Категория правил:
 
@@ -1016,6 +1132,7 @@ export default {
 
 #### Vuelidate
 
+> [!NOTE]
 > 👀 Почитать подробнее про настройку Vuelidate:
 > <https://vuelidate-next.netlify.app>
 > 👀 Прочитать про сами валидаторы (required, email и тп):
@@ -1033,148 +1150,145 @@ npm install @vuelidate/core @vuelidate/validators
 
 ```js
 // ...
-import Vuelidate from "vuelidate";
-createApp(App).use(Vuelidate).mount("#app");
+import Vuelidate from 'vuelidate'
+createApp(App).use(Vuelidate).mount('#app')
 ```
 
 В файле компонента допишем (Vue2):
 
 ```js
-import { useVuelidate } from "@vuelidate/core";
-import { required, email } from "@vuelidate/validators";
+import { useVuelidate } from '@vuelidate/core'
+import { required, email } from '@vuelidate/validators'
 
 export default {
   setup() {
-    return { v$: useVuelidate() };
+    return { v$: useVuelidate() }
   },
   data() {
     return {
-      firstName: "",
-      lastName: "",
+      firstName: '',
+      lastName: '',
       contact: {
-        email: "",
-      },
-    };
+        email: ''
+      }
+    }
   },
   validations() {
     return {
       firstName: { required }, // Matches this.firstName
       lastName: { required }, // Matches this.lastName
       contact: {
-        email: { required, email }, // Matches this.contact.email
-      },
-    };
-  },
-};
+        email: { required, email } // Matches this.contact.email
+      }
+    }
+  }
+}
 ```
 
 В файле компонента допишем (Vue2 + Composition API):
 
 ```js
-import { reactive } from "vue"; // "from '@vue/composition-api'" if you are using Vue <2.7
-import { useVuelidate } from "@vuelidate/core";
-import { required, email } from "@vuelidate/validators";
+import { reactive } from 'vue' // "from '@vue/composition-api'" if you are using Vue <2.7
+import { useVuelidate } from '@vuelidate/core'
+import { required, email } from '@vuelidate/validators'
 
 export default {
   setup() {
     const state = reactive({
-      firstName: "",
-      lastName: "",
+      firstName: '',
+      lastName: '',
       contact: {
-        email: "",
-      },
-    });
+        email: ''
+      }
+    })
     const rules = {
       firstName: { required }, // Matches state.firstName
       lastName: { required }, // Matches state.lastName
       contact: {
-        email: { required, email }, // Matches state.contact.email
-      },
-    };
+        email: { required, email } // Matches state.contact.email
+      }
+    }
 
-    const v$ = useVuelidate(rules, state);
+    const v$ = useVuelidate(rules, state)
 
-    return { state, v$ };
-  },
-};
+    return { state, v$ }
+  }
+}
 ```
 
 То, что я раньше писал:
 
 ```js
-import { reactive, ref } from "vue";
-import useVuelidate from "@vuelidate/core";
-import { required } from "@vuelidate/validators";
+import { reactive, ref } from 'vue'
+import useVuelidate from '@vuelidate/core'
+import { required } from '@vuelidate/validators'
 
 export default {
-  name: "App",
+  name: 'App',
   methods: {
     onSubmit() {
       if (this.v$.$invalid) {
-        this.v$.$touch();
-        this.showError = true;
-        alert("Заполните корректно все обязательные поля!");
-        return;
+        this.v$.$touch()
+        this.showError = true
+        alert('Заполните корректно все обязательные поля!')
+        return
       }
-      alert("Клиент был успешно создан! :)");
-    },
+      alert('Клиент был успешно создан! :)')
+    }
     // ...
   },
   setup() {
     const rules = {
       name: {
-        required,
+        required
       },
       secondName: {},
       birthday: {
         required,
         dateRange(val) {
-          const minDate = new Date(1900, 1, 1);
-          const maxDate = new Date();
-          const date = new Date(val);
-          if (date >= minDate && date <= maxDate) return true;
-          else
-            throw "Дата должна быть в диапазоне от 01.01.1900 до текущей даты";
-        },
+          const minDate = new Date(1900, 1, 1)
+          const maxDate = new Date()
+          const date = new Date(val)
+          if (date >= minDate && date <= maxDate) return true
+          else throw 'Дата должна быть в диапазоне от 01.01.1900 до текущей даты'
+        }
       },
       phone: {
         regex(val) {
-          const regex = /^7[0-9]{10}$/;
-          if (regex.test(val)) return true;
-          else
-            throw "Поле обязательно для заполнения. Формат номера телефона: 11 цифр, начиная с 7";
-        },
+          const regex = /^7[0-9]{10}$/
+          if (regex.test(val)) return true
+          else throw 'Поле обязательно для заполнения. Формат номера телефона: 11 цифр, начиная с 7'
+        }
       },
       passportIssueDate: {
         required,
         dateRange(val) {
-          const minDate = new Date(1900, 1, 1);
-          const maxDate = new Date();
-          const date = new Date(val);
-          if (date >= minDate && date <= maxDate) return true;
-          else
-            throw "Дата должна быть в диапазоне от 01.01.1900 до текущей даты";
-        },
-      },
+          const minDate = new Date(1900, 1, 1)
+          const maxDate = new Date()
+          const date = new Date(val)
+          if (date >= minDate && date <= maxDate) return true
+          else throw 'Дата должна быть в диапазоне от 01.01.1900 до текущей даты'
+        }
+      }
       // ...
-    };
+    }
 
     const state = reactive({
-      number: "",
+      number: '',
       customerGroup: [],
       noSms: false,
-      passportIssueDate: null,
+      passportIssueDate: null
       // ...
-    });
+    })
 
-    const v$ = useVuelidate(rules, state);
+    const v$ = useVuelidate(rules, state)
 
     return {
       v$,
-      state,
-    };
-  },
-};
+      state
+    }
+  }
+}
 ```
 
 Также в HTML-коде компонента нужно написать следующее (пример):
@@ -1205,16 +1319,22 @@ export default {
 
 #### Vue Use
 
+> [!NOTE]
+>
 > _VueUse_: <https://vueuse.org>
 
-s
+пока нечего сказать.
 
-<!-- #### Pinia -->
+#### Pinia
+
+пока нечего сказать.
 
 ---
 
 ### Nuxt.js
 
+> [!NOTE]
+>
 > **Официальная документация**: <https://nuxt.com/docs/guide>
 
 Есть 2 способа создать приложение Nuxt.js:
@@ -1247,34 +1367,34 @@ npx nuxi@latest
 
 ```ts
 // https://nuxt.com/docs/api/configuration/nuxt-config
-import { resolve } from "path";
+import { resolve } from 'path'
 
 export default defineNuxtConfig({
   // SEO
   app: {
     head: {
-      title: "Nuxt Project",
+      title: 'Nuxt Project',
       meta: [
         {
-          name: "description",
-          content: "Some Description 🤪",
-        },
+          name: 'description',
+          content: 'Some Description 🤪'
+        }
       ],
-      charset: "utf-8",
-      viewport: "width=device-width, initial-scale=1",
-    },
+      charset: 'utf-8',
+      viewport: 'width=device-width, initial-scale=1'
+    }
   },
 
   devtools: { enabled: true },
 
   alias: {
-    "@": resolve(__dirname, "/"),
+    '@': resolve(__dirname, '/')
   },
 
-  css: ["~/assets/base.scss"],
+  css: ['~/assets/base.scss']
 
   // ssr: true,
-});
+})
 ```
 
 Далее нужно создавать папки для компонентов, плагинов, middleware и др. Подробнее про эти папки также написано в официальной документации: <https://nuxt.com/docs/guide/directory-structure/assets>
@@ -1297,8 +1417,8 @@ export default defineNuxtConfig({
 ```ts
 export default defineNuxtConfig({
   // ...
-  css: ["~/assets/base.scss"],
-});
+  css: ['~/assets/base.scss']
+})
 ```
 
 Остальные стили подключаются в сами компоненты, как для Vue.
@@ -1346,8 +1466,8 @@ npm add -D sass
 
 <script>
   export default {
-    name: "VscodeIconsFileTypeBun",
-  };
+    name: 'VscodeIconsFileTypeBun'
+  }
 </script>
 ```
 
@@ -1394,6 +1514,8 @@ components/
 
 #### nuxt composables
 
+> [!NOTE]
+>
 > В основе этого лежит **Composition API** (ref, reactivity, provide, inject и тп), который в основном ассоциируется с Vue 3.
 
 **Сomposable** ─ добавляет гибкости и позволяет использовать одну логику с состоянием в нескольких компонентах.
@@ -1402,9 +1524,9 @@ components/
 
 ```ts
 export const useUtils = () => {
-  const sayHi = () => "Hi! 😍";
-  return { sayHi };
-};
+  const sayHi = () => 'Hi! 😍'
+  return { sayHi }
+}
 ```
 
 Теперь внутри компонента нужно добавить:
@@ -1412,7 +1534,7 @@ export const useUtils = () => {
 ```html
 <script setup>
   // Composables
-  const { sayHi } = useUtils();
+  const { sayHi } = useUtils()
 </script>
 
 <template>
@@ -1443,8 +1565,8 @@ export const useUtils = () => {
 <script setup>
   // Указание шаблона для страницы
   definePageMeta({
-    layout: "custom",
-  });
+    layout: 'custom'
+  })
   // ...
 </script>
 ```
@@ -1466,6 +1588,8 @@ export const useUtils = () => {
 
 #### nuxt middleware
 
+> [!NOTE]
+>
 > 👀 <https://nuxt.com/docs/guide/directory-structure/middleware>
 
 Действия, которые будут выполняться автоматически при переходе на другие страницы сайта в процессе маршрутизации.
@@ -1480,8 +1604,8 @@ Middleware можно объявить:
 ```html
 <script setup>
   definePageMeta({
-    middleware: "something",
-  });
+    middleware: 'something'
+  })
   // ...
 </script>
 ```
@@ -1490,16 +1614,16 @@ Middleware можно объявить:
 
 ```ts
 export default defineNuxtRouteMiddleware((to, from) => {
-  if (to.params.id === "1") {
-    return abortNavigation();
+  if (to.params.id === '1') {
+    return abortNavigation()
   }
   // In a real app you would probably not redirect every route to `/`
   // however it is important to check `to.path` before redirecting or you
   // might get an infinite redirect loop
-  if (to.path !== "/") {
-    return navigateTo("/");
+  if (to.path !== '/') {
+    return navigateTo('/')
   }
-});
+})
 ```
 
 #### nuxt pages
@@ -1547,12 +1671,10 @@ export default defineNuxtRouteMiddleware((to, from) => {
 <!-- [id].vue -->
 <script setup>
   // Get route params in the script tags
-  const route = useRoute();
+  const route = useRoute()
 </script>
 <template>
-  <div v-if="$route.params.id == 69">
-    This is the Event #{{ $route.params.id }} (Nice 😎)
-  </div>
+  <div v-if="$route.params.id == 69">This is the Event #{{ $route.params.id }} (Nice 😎)</div>
   <div v-else>This is the Event #{{ $route.params.id }}</div>
 </template>
 ```
@@ -1578,12 +1700,12 @@ export default defineNuxtRouteMiddleware((to, from) => {
 ```html
 <script setup lang="ts">
   definePageMeta({
-    title: "My home page",
-  });
+    title: 'My home page'
+  })
 
   // Получить доступ
-  const route = useRoute();
-  console.log(route.meta.title); // My home page
+  const route = useRoute()
+  console.log(route.meta.title) // My home page
 </script>
 ```
 
@@ -1603,11 +1725,11 @@ export default defineNuxtRouteMiddleware((to, from) => {
 export default defineNuxtPlugin(() => {
   return {
     provide: {
-      hello: (msg: string) => `Hello, ${msg}! 🤪`,
+      hello: (msg: string) => `Hello, ${msg}! 🤪`
       // ...
-    },
-  };
-});
+    }
+  }
+})
 ```
 
 Затем можно в каком-нибудь layout или page вызвать плагин:
@@ -1635,8 +1757,8 @@ export default defineNuxtPlugin(() => {
 ```ts
 export default defineNuxtConfig({
   // ...
-  plugins: ["~/plugins/bar/baz", "~/plugins/bar/foz"],
-});
+  plugins: ['~/plugins/bar/baz', '~/plugins/bar/foz']
+})
 ```
 
 #### nuxt public
@@ -1652,8 +1774,8 @@ export default defineNuxtConfig({
 ```html
 <script setup>
   useSeoMeta({
-    ogImage: "/og-image.png",
-  });
+    ogImage: '/og-image.png'
+  })
 </script>
 ```
 
@@ -1669,6 +1791,8 @@ export default defineNuxtConfig({
 
 #### Useful React Libraries
 
+> [!NOTE]
+>
 > 👀 **Брал отсюда**:
 > <https://dev.to/ruppysuppy/7-libraries-you-should-know-as-a-react-developer-2ib5> > <https://habr.com/ru/companies/ru_mts/articles/745840/>
 
@@ -1692,6 +1816,8 @@ export default defineNuxtConfig({
 
 ### Jest
 
+> [!TIP]
+>
 > _С помощью **Jest** можно запускать unit-тесты, интеграционные тесты и даже Е2Е-тесты (end-to-end)!_
 
 Для того, чтобы начать работу с Jest, нужно установить соответствующие пакеты.
@@ -1712,7 +1838,7 @@ npm i -D @jest/globals
 
 ```javascript
 // Пример импорта
-import { expect, jest, test } from "@jest/globals";
+import { expect, jest, test } from '@jest/globals'
 ```
 
 Есть альтернативный способ установки Jest в свой проект (**❗ПОКА НЕ СОВЕТУЮ ЭТО❗**):
@@ -1767,6 +1893,8 @@ The following questions will help Jest to create a suitable configuration for yo
   },
 ```
 
+> [!TIP]
+>
 > ❗ Скрипт <code>test:unit</code> — это способ тестировать только отдельные файлы. Для этого нужно указать доп. флаги.
 > Например, флаги <code>--testPathIgnorePatterns=</code> и <code>--testPathPattern=</code>
 
@@ -1778,7 +1906,7 @@ The following questions will help Jest to create a suitable configuration for yo
 - **<code>--cache</code>**. Нужно ли использовать кэш. По умолчанию используется значение true. Отключить использование кэша можно с помощью флага <code>--no-cache</code>.
 - **<code>--clearCache</code>**. Удаляет директорию с кэшом Jest и завершает процесс без запуска тестов. Опция <code>cacheDirectory</code> используется для указания директории с кэшом. Если её пропустить, Jest удалит кэш-директорию по-умолчанию. Чтобы узнать, где находится кэш-директория по умолчанию, вызовите следующую комманду: <code>jest --showConfig</code>.
 
-❗ Подробнее про эти флаги можно почитать тут: https://jestjs.io/ru/docs/cli
+❗ Подробнее про эти флаги можно почитать тут: <https://jestjs.io/ru/docs/cli>
 
 #### ts-jest
 
@@ -1794,34 +1922,32 @@ npm i -D jest ts-jest @types/jest
 
 Теперь нужно написать сами тесты. Здесь представлен только пример unit-тестов.
 
-❗ Подробнее про методы Jest можно прочитать здесь: https://jestjs.io/ru/docs/api
+❗ Подробнее про методы Jest можно прочитать здесь: <https://jestjs.io/ru/docs/api>
 
 Пример Jest теста:
 
 ```javascript
 // Импорт методов Jest
-import { describe, expect, it } from "@jest/globals";
+import { describe, expect, it } from '@jest/globals'
 // Импорт штук для тестирования
-import { Pigeon, getPigeonKeys, getLength } from "../../src/Generics/Gererics";
+import { Pigeon, getPigeonKeys, getLength } from '../../src/Generics/Gererics'
 
-const PIGEON = new Pigeon("Pidgey");
+const PIGEON = new Pigeon('Pidgey')
 
-describe("Testing other functions:", () => {
+describe('Testing other functions:', () => {
   it('Testing the "getPigeonKeys" function', () => {
-    expect(getPigeonKeys(PIGEON)).toEqual(["name", "flies", "swims"]);
-  });
+    expect(getPigeonKeys(PIGEON)).toEqual(['name', 'flies', 'swims'])
+  })
 
   // Несколько "expect" в одном тесте будут работать
   it('Testing the "getLength" function', () => {
-    expect(getLength("123")).toBe(3);
-    expect(getLength([1, 2, 3])).toBe(3);
-  });
+    expect(getLength('123')).toBe(3)
+    expect(getLength([1, 2, 3])).toBe(3)
+  })
 
   // Пример TODO-теста
-  test.todo(
-    'The readonly property of the "BabyShark" Class SHOULD be readonly'
-  );
-});
+  test.todo('The readonly property of the "BabyShark" Class SHOULD be readonly')
+})
 ```
 
 При запуске тестов будет возможность использовать горячие клавиши для тестирования только определённых файлов и тестов:
@@ -1841,7 +1967,9 @@ Watch Usage
 
 #### Покрытие тестами
 
-> **Покрытие кода** — это то, какой процент кода в данный момент покрыт unit-тестами.
+> [!TIP]
+>
+> **Покрытие кода** — это то, какой процент кода в данный момент покрыт тестами.
 
 При запуске скрипта <code>coverage</code> в консоли будет отображена следующая таблица:
 
@@ -1852,22 +1980,22 @@ Watch Usage
  PASS  __tests__/jest/4-Properties.test.ts (5.236 s)
  PASS  __tests__/jest/1-Inheritance.test.ts
 ----------------|---------|----------|---------|---------|-------------------
-File            | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
-----------------|---------|----------|---------|---------|-------------------
-All files       |   98.52 |    88.88 |   97.67 |   98.48 |
- Birds          |     100 |      100 |     100 |     100 |
-  Flamingo.ts   |     100 |      100 |     100 |     100 |
-  Penguin.ts    |     100 |      100 |     100 |     100 |
- Fishes         |     100 |      100 |     100 |     100 |
-  Baby Shark.ts |     100 |      100 |     100 |     100 |
-  Shark.ts      |     100 |      100 |     100 |     100 |
- Generics       |   92.85 |      100 |      90 |   91.66 |
-  Gererics.ts   |   92.85 |      100 |      90 |   91.66 | 77
- Parent Classes |     100 |       75 |     100 |     100 |
-  Animal.ts     |     100 |       75 |     100 |     100 | 40,47
-  Bird.ts       |     100 |      100 |     100 |     100 |
-  Fish.ts       |     100 |      100 |     100 |     100 |
-----------------|---------|----------|---------|---------|-------------------
+| File             | % Stmts   | % Branch   | % Funcs   | % Lines   | Uncovered Line #s   |
+| ---------------- | --------- | ---------- | --------- | --------- | ------------------- |
+| All files        | 98.52     | 88.88      | 97.67     | 98.48     |
+| Birds            | 100       | 100        | 100       | 100       |
+| Flamingo.ts      | 100       | 100        | 100       | 100       |
+| Penguin.ts       | 100       | 100        | 100       | 100       |
+| Fishes           | 100       | 100        | 100       | 100       |
+| Baby Shark.ts    | 100       | 100        | 100       | 100       |
+| Shark.ts         | 100       | 100        | 100       | 100       |
+| Generics         | 92.85     | 100        | 90        | 91.66     |
+| Gererics.ts      | 92.85     | 100        | 90        | 91.66     | 77                  |
+| Parent Classes   | 100       | 75         | 100       | 100       |
+| Animal.ts        | 100       | 75         | 100       | 100       | 40,47               |
+| Bird.ts          | 100       | 100        | 100       | 100       |
+| Fish.ts          | 100       | 100        | 100       | 100       |
+| ---------------- | --------- | ---------- | --------- | --------- | ------------------- |
 
 Seed:        652643719
 Test Suites: 5 passed, 5 total
@@ -1879,6 +2007,8 @@ Ran all test suites.
 
 #### Snapshots
 
+> [!NOTE]
+>
 > Подробнее про это написано в **[официальной документации Jest](https://jestjs.io/ru/docs/snapshot-testing)**.
 
 Тестирование с использованием снимков это очень полезный инструмент в ситуациях где вы хотите быть уверены, что ваш пользовательский интерфейс не изменяется неожиданным образом.
@@ -1886,15 +2016,13 @@ Ran all test suites.
 Типичный тест с использованием снимков сначала рендерит ваш UI-компонент, создает снимок на основе рендера, затем сранивает его с эталонным снимком, который хранится вместе с тестом. Тест считается проваленным, если снимки не совпадают: либо измнение непредвиденно, либо снимок нуждается в обновлении до акутальной версии UI-компонента.
 
 ```js
-import renderer from "react-test-renderer";
-import Link from "../Link";
+import renderer from 'react-test-renderer'
+import Link from '../Link'
 
-it("renders correctly", () => {
-  const tree = renderer
-    .create(<Link page="http://www.facebook.com">Facebook</Link>)
-    .toJSON();
-  expect(tree).toMatchSnapshot();
-});
+it('renders correctly', () => {
+  const tree = renderer.create(<Link page="http://www.facebook.com">Facebook</Link>).toJSON()
+  expect(tree).toMatchSnapshot()
+})
 ```
 
 #### Expect
@@ -1933,20 +2061,22 @@ npm create vite@latest
 
 #### Чистый Javascript/Typescript
 
-Пока не понятно, как использовать Vite с Express.js. Надо попробовать 👍.
+Можно выбрать ванильный JavaScript/TypeScript при работе с Vite: ничего особого здесь нет.
 
 #### Express.js + Vite
 
+> [!NOTE]
+>
 > 👀 Про это здесь читал: <https://blog.codeminer42.com/making-a-full-stack-app-with-vue-vite-and-express-that-supports-hot-reload/>
 
-Можно сделать так, чтобы доступ к сайту осуществлялся с порта, на котором сервер работает (http://localhost:3000). Если перейти на этот порт, то клиентская часть сайта тоже будет корректно отображаться. **ИХ НЕ ОБЯЗАТЕЛЬНО НУЖНО ОБЪЕДИНЯТЬ**.
+Можно сделать так, чтобы доступ к сайту осуществлялся с порта, на котором сервер работает (<http://localhost:3000>). Если перейти на этот порт, то клиентская часть сайта тоже будет корректно отображаться. **ИХ НЕ ОБЯЗАТЕЛЬНО НУЖНО ОБЪЕДИНЯТЬ! Они могут просто работать параслельно друг други на разных портах!**
 
 ❗ Рассмотрим шаги.
 
 1. Переименуем файл <code>index.html</code> в <code>index.ejs</code>. Допишем это:
 
 ```html
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <!-- ... -->
@@ -1972,136 +2102,125 @@ index.js
 3. assetsRouter.js:
 
 ```js
-import express from "express";
+import express from 'express'
 
-const router = express.Router();
+const router = express.Router()
 
-const supportedAssets = ["svg", "png", "jpg", "png", "jpeg", "mp4", "ogv"];
+const supportedAssets = ['svg', 'png', 'jpg', 'png', 'jpeg', 'mp4', 'ogv']
 
 const assetExtensionRegex = () => {
-  const formattedExtensionList = supportedAssets.join("|");
+  const formattedExtensionList = supportedAssets.join('|')
 
-  return new RegExp(`/.+\.(${formattedExtensionList})$`);
-};
+  return new RegExp(`/.+\.(${formattedExtensionList})$`)
+}
 
 router.get(assetExtensionRegex(), (req, res) => {
-  res.redirect(303, `http://localhost:5173/src${req.path}`);
-});
+  res.redirect(303, `http://localhost:5173/src${req.path}`)
+})
 
-export default router;
+export default router
 ```
 
 4. db-connect.js:
 
 ```js
-import pg from "pg";
+import pg from 'pg'
 
 const db = new pg.Pool({
-  connectionString: `postgres://postgres:123@127.0.0.1/lab2`,
-});
+  connectionString: `postgres://postgres:123@127.0.0.1/lab2`
+})
 
 db.connect((err) => {
-  if (err) throw err;
-  console.log("\tINFO: База данных PostgreSQL подключена!");
-});
+  if (err) throw err
+  console.log('\tINFO: База данных PostgreSQL подключена!')
+})
 
-export default db;
+export default db
 ```
 
 5. homepageRouter.js:
 
 ```js
-import express from "express";
-import path from "path";
+import express from 'express'
+import path from 'path'
 
-import bodyParser from "body-parser";
+import bodyParser from 'body-parser'
 
-const router = express.Router();
-router.use(express.json()).use(bodyParser.urlencoded({ extended: true }));
+const router = express.Router()
+router.use(express.json()).use(bodyParser.urlencoded({ extended: true }))
 
-const environment = process.env.NODE_ENV || "dev";
-console.log("👀 process.env.NODE_ENV:", environment);
+const environment = process.env.NODE_ENV || 'dev'
+console.log('👀 process.env.NODE_ENV:', environment)
 
 // Подключаем DB
-import database from "./db-connect.js";
+import database from './db-connect.js'
 
 //! Обработка запросов
-router.use("*", async (req, res, next) => {
+router.use('*', async (req, res, next) => {
   // Показ данных "products"
-  if (req.originalUrl === "/api/getProducts") {
+  if (req.originalUrl === '/api/getProducts') {
     try {
-      const result = await database.query("SELECT * FROM products");
-      res.json(result.rows);
+      const result = await database.query('SELECT * FROM products')
+      res.json(result.rows)
     } catch (error) {
-      console.error("Error executing query", error);
-      res.status(500).json({ error: "Internal server error" });
+      console.error('Error executing query', error)
+      res.status(500).json({ error: 'Internal server error' })
     }
     // Создание новой категории
-  } else if (req.originalUrl === "/api/createCategory") {
+  } else if (req.originalUrl === '/api/createCategory') {
     try {
-      const { category_id, category_name, description } = req.body;
+      const { category_id, category_name, description } = req.body
       const result = await database.query(
         `INSERT INTO categories (category_id, category_name, description) VALUES (${category_id}, '${category_name}', '${description}')`
-      );
-      res.json(result.rows);
+      )
+      res.json(result.rows)
     } catch (error) {
-      console.error("Error executing query", error);
-      res.status(500).json({ error: "Internal server error" });
+      console.error('Error executing query', error)
+      res.status(500).json({ error: 'Internal server error' })
     }
     // Удаление товара по ID
-  } else if (req.originalUrl.startsWith("/api/deleteProductByID/")) {
+  } else if (req.originalUrl.startsWith('/api/deleteProductByID/')) {
     try {
-      const id = req.originalUrl.split("/").pop(); // Extract id from URL
-      const result = await database.query(
-        `DELETE FROM products WHERE product_id = $1`,
-        [id]
-      );
-      res.json({ message: "Product deleted successfully" });
+      const id = req.originalUrl.split('/').pop() // Extract id from URL
+      const result = await database.query(`DELETE FROM products WHERE product_id = $1`, [id])
+      res.json({ message: 'Product deleted successfully' })
     } catch (error) {
-      console.error("Error executing query", error);
-      res.status(500).json({ error: "Internal server error" });
+      console.error('Error executing query', error)
+      res.status(500).json({ error: 'Internal server error' })
     }
     // Проверка наличия товара по ID
-  } else if (req.originalUrl.startsWith("/api/checkProductByID/")) {
+  } else if (req.originalUrl.startsWith('/api/checkProductByID/')) {
     try {
-      const id = req.originalUrl.split("/").pop(); // Extract id from URL
-      const result = await database.query(
-        `SELECT * FROM products WHERE product_id = $1`,
-        [id]
-      );
-      res.json(result.rows);
+      const id = req.originalUrl.split('/').pop() // Extract id from URL
+      const result = await database.query(`SELECT * FROM products WHERE product_id = $1`, [id])
+      res.json(result.rows)
     } catch (error) {
-      console.error("Error executing query", error);
-      res.status(500).json({ error: "Internal server error" });
+      console.error('Error executing query', error)
+      res.status(500).json({ error: 'Internal server error' })
     }
     // Получение максимального ID товара
-  } else if (req.originalUrl.startsWith("/api/getMaxProductID")) {
+  } else if (req.originalUrl.startsWith('/api/getMaxProductID')) {
     try {
-      const result = await database.query(
-        `SELECT MAX(product_id) FROM products;`
-      );
-      res.json(result.rows);
+      const result = await database.query(`SELECT MAX(product_id) FROM products;`)
+      res.json(result.rows)
     } catch (error) {
-      console.error("Error executing query", error);
-      res.status(500).json({ error: "Internal server error" });
+      console.error('Error executing query', error)
+      res.status(500).json({ error: 'Internal server error' })
     }
   }
   // Проверка наличия supplier_id в БД
-  else if (req.originalUrl.startsWith("/api/checkSupplier/")) {
+  else if (req.originalUrl.startsWith('/api/checkSupplier/')) {
     try {
-      const id = req.originalUrl.split("/").pop(); // Extract id from URL
-      const result = await database.query(
-        `SELECT * FROM suppliers WHERE supplier_id = $1`,
-        [id]
-      );
-      res.status(200).json({ success: "ID Exists!" });
+      const id = req.originalUrl.split('/').pop() // Extract id from URL
+      const result = await database.query(`SELECT * FROM suppliers WHERE supplier_id = $1`, [id])
+      res.status(200).json({ success: 'ID Exists!' })
     } catch (error) {
-      console.error("Error executing query", error);
-      res.status(500).json({ error: "Internal server error" });
+      console.error('Error executing query', error)
+      res.status(500).json({ error: 'Internal server error' })
     }
   }
   // Добавление нового товара
-  else if (req.originalUrl.startsWith("/api/createProduct")) {
+  else if (req.originalUrl.startsWith('/api/createProduct')) {
     try {
       const {
         product_id,
@@ -2113,55 +2232,55 @@ router.use("*", async (req, res, next) => {
         units_in_stock,
         units_on_order,
         reorder_level,
-        discontinued,
-      } = req.body;
+        discontinued
+      } = req.body
 
       const result = await database.query(
         `INSERT INTO products (product_id, product_name, supplier_id, category_id, quantity_per_unit, unit_price, units_in_stock, units_on_order, reorder_level, discontinued)
         VALUES (${product_id}, '${product_name}', ${supplier_id}, ${category_id}, '${quantity_per_unit}', ${unit_price}, ${units_in_stock}, ${units_on_order}, ${reorder_level}, ${discontinued})`
-      );
-      res.json(result.rows);
+      )
+      res.json(result.rows)
     } catch (error) {
-      console.error("Error executing query", error);
-      res.status(500).json({ error: "Internal server error" });
+      console.error('Error executing query', error)
+      res.status(500).json({ error: 'Internal server error' })
     }
   } else {
-    res.render("../index.html.ejs");
+    res.render('../index.html.ejs')
   }
-});
+})
 
-export default router;
+export default router
 ```
 
 6. index.js:
 
 ```js
-import express from "express";
-import path from "path";
+import express from 'express'
+import path from 'path'
 
-import homepageRouter from "./homepageRouter.js";
-import assetsRouter from "./assetsRouter.js";
+import homepageRouter from './homepageRouter.js'
+import assetsRouter from './assetsRouter.js'
 
-const port = process.env.PORT || 3000;
-const publicPath = path.join(path.resolve(), "public");
-const distPath = path.join(path.resolve(), "dist");
+const port = process.env.PORT || 3000
+const publicPath = path.join(path.resolve(), 'public')
+const distPath = path.join(path.resolve(), 'dist')
 
-const app = express();
+const app = express()
 
-app.use("/", express.static(publicPath));
-app.use("/src", assetsRouter);
+app.use('/', express.static(publicPath))
+app.use('/src', assetsRouter)
 
-app.use(homepageRouter);
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json());
+app.use(homepageRouter)
+app.use(express.urlencoded({ extended: true }))
+app.use(express.json())
 
-app.get("/", async (req, res) => {
+app.get('/', async (req, res) => {
   // res.send("Welcome to the homepage!");
-});
+})
 
 app.listen(port, () => {
-  console.log("Server listening on port", port);
-});
+  console.log('Server listening on port', port)
+})
 ```
 
 7. Устанавливаем эти библиотеки:
@@ -2205,12 +2324,14 @@ npm i nodemon -D
 
 #### Доп. настройки
 
-s
+ХЗ
 
 ---
 
 ### Docker
 
+> [!NOTE]
+>
 > "Docker Desktop" должен быть предварительно установлен.
 
 Я БД разворачиваю, используя Docker-контейнер PostgreSQL.
@@ -2218,25 +2339,25 @@ s
 Сами образы не нужно устанавливать в Docker Desktop. Образ PostgreSQL можно создать, используя <code>docker-compose.yml</code> файл в корне проекта:
 
 ```yml
-version: "3.7"
+version: '3.7'
 services:
   postgres:
     image: postgres:15.2
-    restart: "always"
+    restart: 'always'
     ports:
-      - "5432:5432"
+      - '5432:5432'
     volumes:
-      - "./db/postgresql_data:/var/lib/postgresql/data"
+      - './db/postgresql_data:/var/lib/postgresql/data'
     env_file:
       - .env
 
   pgadmin:
     image: dpage/pgadmin4:6.21
-    restart: "always"
+    restart: 'always'
     volumes:
-      - "./db/pgadmin_data:/var/lib/pgadmin"
+      - './db/pgadmin_data:/var/lib/pgadmin'
     ports:
-      - "80:80"
+      - '80:80'
     env_file:
       - .env
     depends_on:
@@ -2287,10 +2408,29 @@ PGADMIN_DEFAULT_PASSWORD=admin@localhost.com
   docker-compose down
   ```
 
+Пример подключения к БД (в виде отдельного модуля. Используй "Pool"):
+
+```js
+import pg from 'pg'
+
+const db = new pg.Pool({
+  connectionString: `postgres://postgres:123@localhost:5432/postgres`
+})
+
+db.connect((err) => {
+  if (err) throw err
+  console.log('\tINFO: База данных PostgreSQL подключена!')
+})
+
+export default db
+```
+
 ---
 
 ### PostgreSQL
 
+> [!IMPORTANT]
+>
 > Про основы тут не буду писать. Только про интересные вещи.
 
 #### VIEWS
@@ -2513,70 +2653,147 @@ npm install axios
 Пример запросов:
 
 ```js
-import axios from "axios";
+import axios from 'axios'
 
 // ...
 
 const createCategory = async () => {
   try {
     if (categoryName.value.trim().length == 0) {
-      throw new Error("Введите название категории! ❌");
+      throw new Error('Введите название категории! ❌')
     }
 
     // Получение данных от сервера
-    const maxID = await axios.get("/api/getMaxCategoryID");
+    const maxID = await axios.get('/api/getMaxCategoryID')
 
     // Отправка данных на сервер
-    await axios.post("/api/createCategory", {
+    await axios.post('/api/createCategory', {
       category_id: maxID.data[0].max + 1,
       category_name: categoryName.value,
-      description: description.value,
-    });
+      description: description.value
+    })
 
-    alert("Категория успешно создана! ✅");
+    alert('Категория успешно создана! ✅')
 
-    categoryName.value = description.value = "";
+    categoryName.value = description.value = ''
   } catch (error) {
-    console.error(error);
+    console.error(error)
   } finally {
-    console.log("Процесс СОЗДАНИЯ категории завершён!");
+    console.log('Процесс СОЗДАНИЯ категории завершён!')
   }
-};
+}
 
 const deleteProductByID = async () => {
   try {
     if (productID.value === null) {
-      throw new Error("Введите ID продукта! ❌");
+      throw new Error('Введите ID продукта! ❌')
     }
     if (productID.value <= 0) {
-      throw new Error("ID продукта должен быть больше '0'! ❌");
+      throw new Error("ID продукта должен быть больше '0'! ❌")
     }
 
     // Проверка товара на существование
     try {
-      const product_ID = await axios.get(
-        `/api/checkProductByID/${productID.value}`
-      );
+      const product_ID = await axios.get(`/api/checkProductByID/${productID.value}`)
     } catch (error) {
-      throw new Error(`Продукт с ID '${productID.value}' не найден! ❌`);
+      throw new Error(`Продукт с ID '${productID.value}' не найден! ❌`)
     }
 
     // Удаление товара по ID
-    await axios.delete(`/api/deleteProductByID/${productID.value}`);
-    alert(`Продукт с ID '${productID.value}' был успешно удален! ✅`);
+    await axios.delete(`/api/deleteProductByID/${productID.value}`)
+    alert(`Продукт с ID '${productID.value}' был успешно удален! ✅`)
 
-    productID.value = null;
+    productID.value = null
   } catch (error) {
-    alert(error);
+    alert(error)
   } finally {
-    console.log("Процесс УДАЛЕНИЯ продукта завершён!");
+    console.log('Процесс УДАЛЕНИЯ продукта завершён!')
   }
-};
+}
 ```
 
 ---
 
+### Firebase
+
+База данных без SQL.
+
+Нужно перейти на официальный сайт (<https://console.firebase.google.com/?hl=en>) и создать новый Firebase project.
+
+После этого нужно выбрать "web app" и зарегистрировать приложение (имя ему дать).
+
+Наконец-то, нужно будет установить Firebase:
+
+```cmd
+npm i firebase
+```
+
+Потом дополнить файл `main.[jt]s`:
+
+```ts
+import './assets/main.scss'
+
+import { createApp } from 'vue'
+import App from './App.vue'
+import router from './router'
+
+const app = createApp(App)
+
+app.use(router)
+
+// Import the functions you need from the SDKs you need
+import { initializeApp } from 'firebase/app'
+import { getAnalytics } from 'firebase/analytics'
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+const firebaseConfig = {
+  apiKey: 'AIzaSyC7ey0CwLjDiBWEFDFJKIIhqbarjwpZel0',
+  authDomain: 'library-spa-bcaa8.firebaseapp.com',
+  projectId: 'library-spa-bcaa8',
+  storageBucket: 'library-spa-bcaa8.appspot.com',
+  messagingSenderId: '537920377418',
+  appId: '1:537920377418:web:f8d2da5c2da1b802180cb3',
+  measurementId: 'G-N86HR887YX'
+}
+
+// Initialize Firebase
+const FireApp = initializeApp(firebaseConfig)
+const analytics = getAnalytics(FireApp)
+
+app.mount('#app')
+```
+
+Как с этим дальше работать?
+
+```ts
+import { getFirestore, collection, getDocs, deleteDoc, doc } from 'firebase/firestore'
+
+const db = getFirestore()
+const booksCollection = collection(db, 'books') // коллекция 'books'
+
+// Добавление в коллекцию
+let book: Book = { name, authors, year, rating, ISBN }
+await addDoc(booksCollection, book)
+
+// Чтение коллекции
+const querySnapshot = await getDocs(booksCollection)
+const CollectionDocs = querySnapshot.docs
+const books: Book[] = querySnapshot.docs.map((doc) => doc.data() as Book) // например
+
+// Удаление из коллекции
+const bookToDelete = querySnapshot.docs.find((doc) => doc.data().name === bookName) // например
+await deleteDoc(doc(booksCollection, bookToDelete.id))
+```
+
+👀 Данные в коллекциих можно посмотреть в разделе "Firestore Database" (например):
+<https://console.firebase.google.com/project/library-spa-bcaa8/firestore/databases/-default-/data/~2Fbooks~2F2fdm6HLsMZkuEBqke3cC?hl=en>
+
+---
+
 ## Дополнительно
+
+ХЗ
 
 ---
 

@@ -15,13 +15,14 @@
     "clearCache": "jest --clearCache",
     "type-check": "vue-tsc --build --force",
     "lint": "eslint . --ext .vue,.js,.jsx,.cjs,.mjs,.ts,.tsx,.cts,.mts --fix --ignore-path .gitignore",
-    "format": "prettier --write src/",
+    "format": "prettier --write \"./**/*.{js,jsx,mjs,cjs,ts,tsx,json,md}\"",
     "deploy": "npm run build && gh-pages -d dist"
   },
   "keywords": [],
   "author": {
     "name": "Nicolay Kudryavtsev"
   },
-  "dependencies": {},
-  "devDependencies": {}
+  "devDependencies": {
+    "prettier": "^3.3.2"
+  }
 }

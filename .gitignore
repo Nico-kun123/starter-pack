@@ -1,4 +1,4 @@
-# Logs
+#! Logs
 logs
 *.log
 npm-debug.log*
@@ -7,20 +7,23 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Nuxt dev/build outputs
+#! Nuxt dev/build outputs
 .output
 .data
 .nuxt
 .nitro
 .cache
-# Misc
+.env
+
+#! Misc
 .DS_Store
 .fleet
 
-# Можно убрать в некоторых случаях (gh-pages)
+#! Можно убрать в некоторых случаях (gh-pages)
+.vscode/*
 dist
 
-# Папки с кэшем и инфой о покрытии тестами
+#! Папки с кэшем и инфой о покрытии тестами
 # /__tests__/jest/cache
 # /__tests__/jest/Test Coverage
 
@@ -28,9 +31,7 @@ node_modules
 dist-ssr
 *.local
 
-# Editor directories and files
-.vscode/*
-!.vscode/extensions.json
+#! Editor directories and files
 .idea
 .DS_Store
 *.suo
